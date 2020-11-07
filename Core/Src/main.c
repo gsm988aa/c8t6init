@@ -60,7 +60,7 @@ void SystemClock_Config(void);
 /* USER CODE BEGIN 0 */
 int fputc(int ch, FILE *f){
 	uint8_t temp[1] = {ch};
-	HAL_UART_Transmit(&huart1, temp, 1, 2);//huart1??????????
+	HAL_UART_Transmit(&huart1, temp, 1, 2); 
 	return ch;
 }
 
@@ -87,7 +87,8 @@ int fputc(int ch, FILE *f){
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-	uint16_t AD_Value;
+	uint16_t AD_Value,AD_Value_get;
+	uint8_t ADC_Convert_array[2],AD_Value_gethigh,AD_Value_getlow;
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -117,11 +118,7 @@ int main(void)
 	
 	
 	
-	HAL_ADC_Start(&hadc1); 
-	HAL_ADC_PollForConversion(&hadc1, 50);
-	if(HAL_IS_BIT_SET(HAL_ADC_GetState(&hadc1), HAL_ADC_STATE_REG_EOC)){
-	AD_Value = HAL_ADC_GetValue(&hadc1); 
-	printf("[\tmain]info:v=%.1fmv\r\n",AD_Value*3300.0/4096); }
+
 	
 	
 	
@@ -134,8 +131,25 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+		HAL_Delay(500);
     /* USER CODE END WHILE */
+	HAL_ADC_Start(&hadc1); 
+	HAL_ADC_PollForConversion(&hadc1, 50);
+	if(HAL_IS_BIT_SET(HAL_ADC_GetState(&hadc1), HAL_ADC_STATE_REG_EOC)){
+	AD_Value = HAL_ADC_GetValue(&hadc1); 
+	HAL_SPI_Receive(&hspi1,ADC_Convert_array,1,2);
+		 
+// 		AD_Value_getlow=ADC_Convert_array[0]; 
+//		AD_Value_gethigh=ADC_Convert_array[1]; 
+     AD_Value_get= ( ADC_Convert_array[1]   <<8 )+ ADC_Convert_array[0]; 
+// 
+// 		printf("[\tmain]Slavehigh:v=%d\r\n",AD_Value_gethigh);
+//		printf("[\tmain]Slavelow:v=%d\r\n",AD_Value_getlow);
+ 		printf("[\tmain]Slave2:v=%.3f\r\n",AD_Value_get*3.3/4096  );
+		printf("[\tmain]Master:v=%.3f\r\n",AD_Value*3.3/4096);
 
+
+	}
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
