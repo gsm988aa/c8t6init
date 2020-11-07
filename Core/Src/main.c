@@ -20,6 +20,8 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "adc.h"
+#include "dma.h"
+#include "spi.h"
 #include "usart.h"
 #include "gpio.h"
 
@@ -106,9 +108,25 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_DMA_Init();
   MX_USART1_UART_Init();
   MX_ADC1_Init();
+  MX_SPI1_Init();
   /* USER CODE BEGIN 2 */
+	
+	
+	
+	
+	HAL_ADC_Start(&hadc1); 
+	HAL_ADC_PollForConversion(&hadc1, 50);
+	if(HAL_IS_BIT_SET(HAL_ADC_GetState(&hadc1), HAL_ADC_STATE_REG_EOC)){
+	AD_Value = HAL_ADC_GetValue(&hadc1); 
+	printf("[\tmain]info:v=%.1fmv\r\n",AD_Value*3300.0/4096); }
+	
+	
+	
+	
+	
 
   /* USER CODE END 2 */
 
@@ -117,17 +135,10 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
- 
-			
-	HAL_ADC_Start(&hadc1); 
-	HAL_ADC_PollForConversion(&hadc1, 50);
-	if(HAL_IS_BIT_SET(HAL_ADC_GetState(&hadc1), HAL_ADC_STATE_REG_EOC)){
-	AD_Value = HAL_ADC_GetValue(&hadc1); 
-	printf("[\tmain]info:v=%.1fmv\r\n",AD_Value*3300.0/4096); 
-	}
-		
+
+    /* USER CODE BEGIN 3 */
+  }
   /* USER CODE END 3 */
-	}
 }
 
 /**
