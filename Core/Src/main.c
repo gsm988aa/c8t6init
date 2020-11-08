@@ -27,7 +27,8 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include <stdio.h>
+#include "stdio.h"
+#include "bsp_dht21.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -88,7 +89,16 @@ int main(void)
 {
   /* USER CODE BEGIN 1 */
 	uint16_t AD_Value,AD_Value_get;
-	uint8_t ADC_Convert_array[2],AD_Value_gethigh,AD_Value_getlow;
+	uint8_t ADC_Convert_array[2];
+	
+	uint8_t AM_OnlineFlag;
+
+	unsigned char UART_string0[4];
+	unsigned char UART_string1[4];
+	
+	
+	
+	
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -97,7 +107,16 @@ int main(void)
   HAL_Init();
 
   /* USER CODE BEGIN Init */
-
+//			HAL_Delay(500);
+//			/* USER CODE END WHILE */
+//		HAL_ADC_Start(&hadc1); 
+//		HAL_ADC_PollForConversion(&hadc1, 50);
+//		if(HAL_IS_BIT_SET(HAL_ADC_GetState(&hadc1), HAL_ADC_STATE_REG_EOC)){
+//		AD_Value = HAL_ADC_GetValue(&hadc1); 
+//		HAL_SPI_Receive(&hspi1,ADC_Convert_array,1,2);
+//			 AD_Value_get= ( ADC_Convert_array[1]   <<8 )+ ADC_Convert_array[0]; 
+//			printf("[\tmain]Slave2:v=%.3f\r\n",AD_Value_get*3.3/4096  );
+//			printf("[\tmain]Master:v=%.3f\r\n",AD_Value*3.3/4096);
   /* USER CODE END Init */
 
   /* Configure the system clock */
@@ -115,41 +134,23 @@ int main(void)
   MX_SPI1_Init();
   /* USER CODE BEGIN 2 */
 	
+//		DHT11_GPIO_Config();
 	
 	
-	
-
-	
-	
-	
-	
-	
-
+ 
+	 
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-		HAL_Delay(500);
+ 
+    DHT_data d = DHT_getData(DHT22);
+    printf("Temp: %2.1f \r\n", d.temp  );
+    HAL_Delay(1000);
+			 
     /* USER CODE END WHILE */
-	HAL_ADC_Start(&hadc1); 
-	HAL_ADC_PollForConversion(&hadc1, 50);
-	if(HAL_IS_BIT_SET(HAL_ADC_GetState(&hadc1), HAL_ADC_STATE_REG_EOC)){
-	AD_Value = HAL_ADC_GetValue(&hadc1); 
-	HAL_SPI_Receive(&hspi1,ADC_Convert_array,1,2);
-		 
-// 		AD_Value_getlow=ADC_Convert_array[0]; 
-//		AD_Value_gethigh=ADC_Convert_array[1]; 
-     AD_Value_get= ( ADC_Convert_array[1]   <<8 )+ ADC_Convert_array[0]; 
-// 
-// 		printf("[\tmain]Slavehigh:v=%d\r\n",AD_Value_gethigh);
-//		printf("[\tmain]Slavelow:v=%d\r\n",AD_Value_getlow);
- 		printf("[\tmain]Slave2:v=%.3f\r\n",AD_Value_get*3.3/4096  );
-		printf("[\tmain]Master:v=%.3f\r\n",AD_Value*3.3/4096);
-
-
-	}
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */

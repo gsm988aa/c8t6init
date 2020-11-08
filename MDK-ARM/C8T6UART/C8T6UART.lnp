@@ -8,6 +8,7 @@
 "c8t6uart\usart.o"
 "c8t6uart\stm32f1xx_it.o"
 "c8t6uart\stm32f1xx_hal_msp.o"
+"c8t6uart\bsp_dht21.o"
 "c8t6uart\stm32f1xx_hal_gpio_ex.o"
 "c8t6uart\stm32f1xx_hal_adc.o"
 "c8t6uart\stm32f1xx_hal_adc_ex.o"

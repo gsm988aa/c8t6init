@@ -35,3 +35,4 @@ c8t6uart\main.o: ../Core/Inc/spi.h
 c8t6uart\main.o: ../Core/Inc/usart.h
 c8t6uart\main.o: ../Core/Inc/gpio.h
 c8t6uart\main.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
+c8t6uart\main.o: ../Core/Inc/bsp_dht21.h
