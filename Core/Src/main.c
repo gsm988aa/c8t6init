@@ -89,13 +89,11 @@ int main(void)
 {
   /* USER CODE BEGIN 1 */
 	uint16_t AD_Value,AD_Value_get;
+ 
 	uint8_t ADC_Convert_array[2];
-	
 	uint8_t AM_OnlineFlag;
 
-	unsigned char UART_string0[4];
-	unsigned char UART_string1[4];
-	
+ 
 	
 	
 	
@@ -135,8 +133,10 @@ int main(void)
   /* USER CODE BEGIN 2 */
 	
 //		DHT11_GPIO_Config();
-	
-	
+//	
+//	    DHT_data d = DHT_getData(DHT22);
+//    printf("Temp: %2.1f \r\n", d.temp  );
+//    HAL_Delay(1000);
  
 	 
   /* USER CODE END 2 */
@@ -146,9 +146,25 @@ int main(void)
   while (1)
   {
  
-    DHT_data d = DHT_getData(DHT22);
-    printf("Temp: %2.1f \r\n", d.temp  );
-    HAL_Delay(1000);
+		uint8_t ADC_Conert_array[2];
+
+			
+		HAL_Delay(500);
+		HAL_ADC_Start(&hadc1); 
+		HAL_ADC_PollForConversion(&hadc1, 50);
+		if(HAL_IS_BIT_SET(HAL_ADC_GetState(&hadc1), HAL_ADC_STATE_REG_EOC)){
+		AD_Value = HAL_ADC_GetValue(&hadc1); 
+	  ADC_Conert_array[1]=(AD_Value>>8) & 0x0f;//high
+    ADC_Conert_array[0]=AD_Value&0xff; //low
+
+		// ADC_Conert_array[0]=AD_Value*256/4096; 
+ 
+		 HAL_SPI_Transmit(&hspi1, ADC_Conert_array, 1 ,2);
+		}
+			 
+			
+//			printf("[\tmain]Slave2:v=%.3f\r\n",AD_Value_get*3.3/4096  );
+//			printf("[\tmain]Master:v=%.3f\r\n",AD_Value*3.3/4096);
 			 
     /* USER CODE END WHILE */
     /* USER CODE BEGIN 3 */
