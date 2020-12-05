@@ -48,6 +48,19 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
+//#define ADC_CHANNEL_CNT 10 	//采样通道数
+//#define ADC_CHANNEL_FRE 1	//单个通道采样次数，用来取平均值
+//uint16_t adc1_val_buf[10]; //传递给DMA存放多通道采样值的数组
+//uint16_t i,j;
+//uint32_t adc1_aver_val[ADC_CHANNEL_CNT] = {0}; //保存多通道的平均采样值的数组
+//uint32_t dma_cnt1 = 0;
+
+uint32_t ADC_Value[1000];
+uint8_t ADC_Convert_Value[20];
+uint16_t i;
+uint32_t ad1,ad2;
+uint32_t  ad3,ad4;
+uint32_t ad10,ad5,ad6,ad7,ad8,ad9;
 
 /* USER CODE END PV */
 
@@ -88,11 +101,12 @@ int fputc(int ch, FILE *f){
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-	uint16_t AD_Value,AD_Value_get;
+//	uint16_t AD_Value,AD_Value_get;
+	
 
  
 //	uint8_t ADC_Convert_array[2];
-	uint8_t AM_OnlineFlag;
+//	uint8_t AM_OnlineFlag;
 
  
 	
@@ -105,22 +119,30 @@ int main(void)
 
   /* USER CODE BEGIN Init */
 //			HAL_Delay(500);
-//			/* USER CODE END WHILE */
-//		HAL_ADC_Start(&hadc1); 
-//		HAL_ADC_PollForConversion(&hadc1, 50);
-//		if(HAL_IS_BIT_SET(HAL_ADC_GetState(&hadc1), HAL_ADC_STATE_REG_EOC)){
-//		AD_Value = HAL_ADC_GetValue(&hadc1); 
-//		HAL_SPI_Receive(&hspi1,ADC_Convert_array,1,2);
-//			 AD_Value_get= ( ADC_Convert_array[1]   <<8 )+ ADC_Convert_array[0]; 
-//			printf("[\tmain]Slave2:v=%.3f\r\n",AD_Value_get*3.3/4096  );
-//			printf("[\tmain]Master:v=%.3f\r\n",AD_Value*3.3/4096);
+ 
   /* USER CODE END Init */
 
   /* Configure the system clock */
   SystemClock_Config();
 
   /* USER CODE BEGIN SysInit */
-
+//		HAL_Delay(500);
+//		for(i = 0,ad1 =0,ad2=0,ad3=0,ad4=0; i < 1000;){
+//		ad1 += ADC_Value[i++];
+//		ad2 += ADC_Value[i++];
+//		ad3 += ADC_Value[i++];
+//		ad4 += ADC_Value[i++];
+//		}
+//		ad1 /= 250;
+//		ad2 /= 250;
+//		ad3 /= 250;
+//		ad4 /= 250;
+//		printf("\r\n********ADC-DMA-Example********\r\n");
+//		printf("[\tmain]info:AD1_value=%1.3fV\r\n", ad1*3.3f/4095);
+//		printf("[\tmain]info:AD2_value=%1.3fV\r\n", ad2*3.3f/4095);
+//		printf("[\tmain]info:AD3_value=%1.3fV\r\n", ad3*3.3f/4095);
+//		printf("[\tmain]info:AD4_value=%1.3fV\r\n\n", ad4*3.3f/4095);
+//						
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
@@ -130,70 +152,87 @@ int main(void)
   MX_ADC1_Init();
   MX_SPI1_Init();
   /* USER CODE BEGIN 2 */
-	
-//		DHT11_GPIO_Config();
-//	
-//	    DHT_data d = DHT_getData(DHT22);
-//    printf("Temp: %2.1f \r\n", d.temp  );
-//    HAL_Delay(1000);
- 
-	 
+			printf("\r\n********ADC-DMA-Example********\r\n");
+
+//	HAL_ADC_Start_DMA(&hadc1,(uint32_t*) &adc1_val_buf, (ADC_CHANNEL_CNT*ADC_CHANNEL_FRE));
+//	HAL_Delay(100);
+// 
+	 HAL_ADC_Start_DMA(&hadc1, (uint32_t*)&ADC_Value, 1000);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-		printf("hallo");
- 
-		uint8_t ADC_Convert_array[20];
-
+		HAL_Delay(500);
 		
-		HAL_Delay(200);
-//		HAL_ADC_Start(&hadc1); 
-//		HAL_ADC_PollForConversion(&hadc1, 50);
-
-		//			ADC_Conert_array[1]=(AD_Value>>8) & 0x0f;//high
-//			ADC_Conert_array[0]=AD_Value&0xff; //low
-        HAL_ADC_Start(&hadc1);                               //开启ADC
-        HAL_ADC_PollForConversion(&hadc1, 10);               //轮询转换
-        for (int i=0,k = 0; i < 10; i++)
-        {
-					 HAL_ADC_Start(&hadc1);                               //开启ADC
-        HAL_ADC_PollForConversion(&hadc1, 10);               //轮询转换
-          printf("%d=%d\t\n", i,(uint16_t)HAL_ADC_GetValue(&hadc1));              //返回最近一次ADC1规则组的转换结果
-//					AD_Value_array[i]=(uint16_t)HAL_ADC_GetValue(&hadc1);
-//					k=2*i;
-//					ADC_Convert_array[k]=(AD_Value_array[i])& 0x0f;//high
-//					ADC_Convert_array[k+1]=(AD_Value_array[i])& 0xff; //low
-//					printf("%d,=%d\t\n",k, ADC_Convert_array[k]);              //返回最近一次ADC1规则组的转换结果
-//					printf("%d,=%d\t\n",k+1, ADC_Convert_array[k+1]);              //返回最近一次ADC1规则组的转换结果
-				   HAL_Delay(20);
-					
-        }
-        printf("\r\n");
-        HAL_Delay(500);
- 
-		
-		if(HAL_IS_BIT_SET(HAL_ADC_GetState(&hadc1), HAL_ADC_STATE_REG_EOC)){
-			
-//			AD_Value = HAL_ADC_GetValue(&hadc1); 
-//			ADC_Conert_array[1]=(AD_Value>>8) & 0x0f;//high
-//			ADC_Conert_array[0]=AD_Value&0xff; //low
-
-//			ADC_Conert_array[1]=(ADC_Conert_array[1]>>8) & 0x0f;//high
-//			ADC_Conert_array[0]=AD_Value&0xff; //low
-			
-			
-		// ADC_Conert_array[0]=AD_Value*256/4096; 
- 
-		 HAL_SPI_Transmit_DMA (&hspi1, ADC_Convert_array, 1);
+		for(i = 0,ad1 =0,ad2=0,ad3=0,ad4=0; i < 1000;){
+		ad1 += ADC_Value[i++];
+		ad2 += ADC_Value[i++];
+		ad3 += ADC_Value[i++];
+		ad4 += ADC_Value[i++];
+		ad5 += ADC_Value[i++];
+		ad6 += ADC_Value[i++];
+		ad7 += ADC_Value[i++];
+		ad8 += ADC_Value[i++];
+		ad9 += ADC_Value[i++];
+		ad10 += ADC_Value[i++];
 		}
-			 
-			
-//			printf("[\tmain]Slave2:v=%.3f\r\n",AD_Value_get*3.3/4096  );
-//			printf("[\tmain]Master:v=%.3f\r\n",AD_Value*3.3/4096);
-			 
+		ad1 /= 100;
+		ad2 /= 100;
+		ad3 /= 100;
+		ad4 /= 100;
+		ad5 /= 100;
+		ad6 /= 100;
+		ad7 /= 100;
+		ad8 /= 100;
+		ad9 /= 100;
+		ad10 /= 100;
+// uint8_t ADC_Convert_Value[10];
+		
+		ADC_Convert_Value[1]=(ad1>>8) & 0x0f;//high
+  	ADC_Convert_Value[0]=ad1&0xff; //low
+		
+		ADC_Convert_Value[3]=(ad2>>8) & 0x0f;//high
+  	ADC_Convert_Value[2]=ad2&0xff; //low
+		
+		ADC_Convert_Value[5]=(ad3>>8) & 0x0f;//high
+  	ADC_Convert_Value[4]=ad3&0xff; //low
+		
+		ADC_Convert_Value[7]=(ad4>>8) & 0x0f;//high
+  	ADC_Convert_Value[6]=ad4&0xff; //low
+
+		ADC_Convert_Value[9]=(ad5>>8) & 0x0f;//high
+  	ADC_Convert_Value[8]=ad5&0xff; //low
+
+		ADC_Convert_Value[11]=(ad6>>8) & 0x0f;//high
+  	ADC_Convert_Value[10]=ad6&0xff; //low
+		
+		ADC_Convert_Value[13]=(ad7>>8) & 0x0f;//high
+  	ADC_Convert_Value[12]=ad7&0xff; //low
+		
+		ADC_Convert_Value[15]=(ad8>>8) & 0x0f;//high
+  	ADC_Convert_Value[14]=ad8&0xff; //low
+		
+		ADC_Convert_Value[17]=(ad9>>8) & 0x0f;//high
+  	ADC_Convert_Value[16]=ad9&0xff; //low
+		
+		ADC_Convert_Value[19]=(ad10>>8) & 0x0f;//high
+  	ADC_Convert_Value[18]=ad10&0xff; //low
+		
+		 HAL_SPI_Transmit_DMA (&hspi1, ADC_Convert_Value, 1);
+//		printf("\r\n********ADC-DMA-Example********\r\n");
+//		printf("[\tmain]info:AD1_value=%1.3fV\r\n", ad1*3.3f/4095);
+//		printf("[\tmain]info:AD2_value=%1.3fV\r\n", ad2*3.3f/4095);
+//		printf("[\tmain]info:AD3_value=%1.3fV\r\n", ad3*3.3f/4095);
+//		printf("[\tmain]info:AD4_value=%1.3fV\r\n", ad4*3.3f/4095);
+//		printf("[\tmain]info:AD5_value=%1.3fV\r\n", ad5*3.3f/4095);
+//		printf("[\tmain]info:AD6_value=%1.3fV\r\n", ad6*3.3f/4095);
+//		printf("[\tmain]info:AD7_value=%1.3fV\r\n", ad7*3.3f/4095);
+//		printf("[\tmain]info:AD8_value=%1.3fV\r\n", ad8*3.3f/4095);
+//		printf("[\tmain]info:AD9_value=%1.3fV\r\n", ad9*3.3f/4095);
+//		printf("[\tmain]info:AD10_value=%1.3fV\r\n\n", ad10*3.3f/4095);										
+		
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -247,7 +286,13 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
-
+//void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hadc)
+//{
+//	if(hadc==(&hadc1))
+//	{
+//		dma_cnt1++;
+//	}   
+//}
 /* USER CODE END 4 */
 
 /**
