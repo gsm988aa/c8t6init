@@ -89,13 +89,12 @@ int main(void)
 {
   /* USER CODE BEGIN 1 */
 	uint16_t AD_Value,AD_Value_get;
+
  
-	uint8_t ADC_Convert_array[2];
+//	uint8_t ADC_Convert_array[2];
 	uint8_t AM_OnlineFlag;
 
  
-	
-	
 	
   /* USER CODE END 1 */
 
@@ -145,21 +144,50 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+		printf("hallo");
  
-		uint8_t ADC_Conert_array[2];
+		uint8_t ADC_Convert_array[20];
 
-			
-		HAL_Delay(500);
-		HAL_ADC_Start(&hadc1); 
-		HAL_ADC_PollForConversion(&hadc1, 50);
+		
+		HAL_Delay(200);
+//		HAL_ADC_Start(&hadc1); 
+//		HAL_ADC_PollForConversion(&hadc1, 50);
+
+		//			ADC_Conert_array[1]=(AD_Value>>8) & 0x0f;//high
+//			ADC_Conert_array[0]=AD_Value&0xff; //low
+        HAL_ADC_Start(&hadc1);                               //开启ADC
+        HAL_ADC_PollForConversion(&hadc1, 10);               //轮询转换
+        for (int i=0,k = 0; i < 10; i++)
+        {
+					 HAL_ADC_Start(&hadc1);                               //开启ADC
+        HAL_ADC_PollForConversion(&hadc1, 10);               //轮询转换
+          printf("%d=%d\t\n", i,(uint16_t)HAL_ADC_GetValue(&hadc1));              //返回最近一次ADC1规则组的转换结果
+//					AD_Value_array[i]=(uint16_t)HAL_ADC_GetValue(&hadc1);
+//					k=2*i;
+//					ADC_Convert_array[k]=(AD_Value_array[i])& 0x0f;//high
+//					ADC_Convert_array[k+1]=(AD_Value_array[i])& 0xff; //low
+//					printf("%d,=%d\t\n",k, ADC_Convert_array[k]);              //返回最近一次ADC1规则组的转换结果
+//					printf("%d,=%d\t\n",k+1, ADC_Convert_array[k+1]);              //返回最近一次ADC1规则组的转换结果
+				   HAL_Delay(20);
+					
+        }
+        printf("\r\n");
+        HAL_Delay(500);
+ 
+		
 		if(HAL_IS_BIT_SET(HAL_ADC_GetState(&hadc1), HAL_ADC_STATE_REG_EOC)){
-		AD_Value = HAL_ADC_GetValue(&hadc1); 
-	  ADC_Conert_array[1]=(AD_Value>>8) & 0x0f;//high
-    ADC_Conert_array[0]=AD_Value&0xff; //low
+			
+//			AD_Value = HAL_ADC_GetValue(&hadc1); 
+//			ADC_Conert_array[1]=(AD_Value>>8) & 0x0f;//high
+//			ADC_Conert_array[0]=AD_Value&0xff; //low
 
+//			ADC_Conert_array[1]=(ADC_Conert_array[1]>>8) & 0x0f;//high
+//			ADC_Conert_array[0]=AD_Value&0xff; //low
+			
+			
 		// ADC_Conert_array[0]=AD_Value*256/4096; 
  
-		 HAL_SPI_Transmit(&hspi1, ADC_Conert_array, 1 ,2);
+		 HAL_SPI_Transmit_DMA (&hspi1, ADC_Convert_array, 1);
 		}
 			 
 			
@@ -167,6 +195,7 @@ int main(void)
 //			printf("[\tmain]Master:v=%.3f\r\n",AD_Value*3.3/4096);
 			 
     /* USER CODE END WHILE */
+
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
